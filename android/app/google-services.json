@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "574322207892",
+    "firebase_url": "https://aanchal-d17d5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "aanchal-d17d5",
+    "storage_bucket": "aanchal-d17d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574322207892:android:60598a321c9d9129fa5881",
+        "android_client_info": {
+          "package_name": "my.aanchal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574322207892-1ci2dvm5044a7elmlo27558t58s4srcu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "my.aanchal",
+            "certificate_hash": "20c218663078910f67ee99a8d5ed26e3630b5820"
+          }
+        },
+        {
+          "client_id": "574322207892-8kmpanq6tv5nl218kjrfpbpr300p0b23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7ch3SMrepgQfLEkGIY2u4lGZ8_fNbwEU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574322207892-8kmpanq6tv5nl218kjrfpbpr300p0b23.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574322207892-k1h2mrodt63acu0o47oov6924ql7josi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ios.aanchal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

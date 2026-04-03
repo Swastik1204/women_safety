@@ -1,0 +1,120 @@
+// Aanchal — Firestore Security Rules
+//
+// ⚠️  DEV MODE — these rules allow any authenticated user read/write access
+//     to user documents.  Tighten before production:
+//       • Restrict profile writes to the document owner only.
+//       • Remove or scope the /calls subcollection.
+//       • Add server-side validation for required fields.
+//
+// Deploy:
+//   firebase deploy --only firestore:rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+             && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+      match /emergency_contacts/{contactId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /cart/{productId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /wishlist/{productId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // Safety map overlay data.
+    match /danger_zones/{zoneId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /static_places/{placeId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /community_posts/{postId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+                    && request.resource.data.authorUid == request.auth.uid;
+      allow update, delete: if isSignedIn()
+                            && (
+                              resource.data.authorUid == request.auth.uid
+                              || isAdmin()
+                            );
+
+      match /comments/{commentId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn()
+                      && request.resource.data.authorUid == request.auth.uid;
+        allow update, delete: if isSignedIn()
+                              && (
+                                resource.data.authorUid == request.auth.uid
+                                || isAdmin()
+                              );
+      }
+    }
+
+    match /workshops/{workshopId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+
+      match /registrations/{uid} {
+        allow read: if isSignedIn() && (uid == request.auth.uid || isAdmin());
+        allow write: if isSignedIn() && (uid == request.auth.uid || isAdmin());
+      }
+    }
+
+    match /shop_products/{productId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /sos_events/{eventId} {
+      allow read: if isSignedIn()
+                  && (
+                    request.auth.uid in resource.data.targetUserIds
+                    || request.auth.uid == resource.data.fromUserId
+                    || isAdmin()
+                  );
+      allow write: if false;
+    }
+
+    match /sos_sessions/{sessionId} {
+      allow read: if isSignedIn()
+                  && (
+                    request.auth.uid == resource.data.userId
+                    || request.auth.uid in resource.data.contacts
+                    || isAdmin()
+                  );
+      allow write: if false;
+
+      match /locations/{locationId} {
+        allow read: if isSignedIn()
+                    && (
+                      request.auth.uid == get(/databases/$(database)/documents/sos_sessions/$(sessionId)).data.userId
+                      || request.auth.uid in get(/databases/$(database)/documents/sos_sessions/$(sessionId)).data.contacts
+                      || isAdmin()
+                    );
+        allow write: if false;
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: aanchal-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
